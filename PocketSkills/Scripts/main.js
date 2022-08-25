@@ -135,7 +135,7 @@ $(function main() {
                 $('#mainLoadingScreen').show();
             });
 
-            $('#mainSignedInPic').attr('src', 'https://apis.live.net/v5.0/' + server.userID + '/picture?type=small');
+            //$('#mainSignedInPic').attr('src', 'https://apis.live.net/v5.0/' + server.userID + '/picture?type=small');
             $('#mainSignedInName').text(server.userName);
         }
     }
