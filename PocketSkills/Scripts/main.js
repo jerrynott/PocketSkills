@@ -130,6 +130,8 @@ $(function main() {
             loads.push(diarycards.load(server.SAS_diarycards, server.SAS_content, server.userID));
             loads.push(data.load(server.SAS_data, server.userID));
 
+            console.log(JSON.stringify(loads))
+
             $.when.apply($, loads).done(finish).fail(function fail(jqxhr, textStatus, error) {
                 showLoad(error + ": " + textStatus);
                 $('#mainLoadingScreen').show();
