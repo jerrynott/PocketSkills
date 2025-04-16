@@ -68,10 +68,12 @@ $(function main() {
 
     function checkSignIn() {
         showLoad("Checking Signin Status...");
+        console.log(`WL init`)
         WL.init({
             client_id: '57d2f757-526c-45cb-b21f-29247ce3dfed',
             redirect_uri: 'https://' + window.location.hostname + '/wlcallback.html',
         });
+        console.log(`WL getloginstatus`)
         WL.getLoginStatus(function (status, session) {
             if (status.status == 'connected') {
                 showLoad("Already Signed In.");
@@ -83,6 +85,7 @@ $(function main() {
                 $('#mainLoadingScreen').fadeOut('slow');
             }
         }, true);
+        console.log("Sign out");
         $('#windowsLiveSignOut, #invitationSignOut').click(function () {
             WL.logout(function () {
                 location.href = location.origin;
