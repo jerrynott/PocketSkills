@@ -27,6 +27,8 @@ function Notepad(element, data) {
 
     // Loads all previous notes into the list.
     _this.load = function (sas, user) {
+        console.log(`Loaded notepad`);
+
         _this.table = azure.getTable(sas);
         _this.user = user;
 

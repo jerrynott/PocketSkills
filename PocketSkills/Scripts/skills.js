@@ -73,6 +73,8 @@ function Skills(element, data) {
 
     // Loads the list of skills from the Content Worksheet via Azure.
     _this.load = function (sas) {
+        console.log(`Loaded Skills`);
+
         return _this.skills.load(sas);
     }
 

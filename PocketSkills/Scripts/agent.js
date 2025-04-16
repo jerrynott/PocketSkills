@@ -20,6 +20,8 @@ function Agent(element, data) {
     _this.loaded = null; // Keeps track of whether we have loaded data or not.
 
     $(_this.content).on('loaded', function () {
+        console.log(`Loaded Agent`);
+
         _this.lines = [];
         _this.content.forEach(function (line) {
             _this.lines.push(line);

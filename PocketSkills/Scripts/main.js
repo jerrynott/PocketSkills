@@ -188,6 +188,7 @@ $(function main() {
     });
 
     $(settings).on('loaded', function () {
+        console.log(`Loaded Settings`);
         var placeholders = {
             'AboutText': '#AboutAboutText',
             'LegalText': '#AboutLegalText',

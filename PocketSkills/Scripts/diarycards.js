@@ -32,6 +32,8 @@ function DiaryCards(element, data) {
     _this.$cards = $('<div>').addClass('cards').appendTo(_this.$root);
 
     $(_this.content).on('loaded', function () {
+        console.log(`Loaded diarycards`);
+
         _this.items = [];
         _this.content.forEach(function (row) {
             _this.items.push(row);
