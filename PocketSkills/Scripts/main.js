@@ -70,7 +70,7 @@ $(function main() {
         showLoad("Checking Signin Status...");
         console.log(`WL init`)
         WL.init({
-            client_id: '57d2f757-526c-45cb-b21f-29247ce3dfed',
+            client_id: '575104a6-fd83-4fe1-99d2-20e841cc5aed',
             redirect_uri: 'https://' + window.location.hostname + '/wlcallback.html',
         });
         console.log(`WL getloginstatus`)
