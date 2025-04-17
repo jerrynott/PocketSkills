@@ -22,13 +22,13 @@ function showLoad(message, writeLog) {
 // You can hard-code an add-only SAS URL here to log failures that might occur even before Server.cshtml is loaded.
 //window.logTable = azure.getTable('https://ACCOUNT.table.core.windows.net:443/TABLENAME?sv=2015-12-11&si=POLICY&tn=TABLENAME&sig=SIGNATURE');
 window.log = function (message) {
-    console.trace(message);
+    console.log(message);
     window.logTable && azure.writeMessage(window.logTable, window.server ? window.server.userID : '.', message);
 };
 
 $(function main() {
     'use strict';
-
+    debugger;
     showLoad("Initializing Objects...");
 
     window.settings = new Settings();
