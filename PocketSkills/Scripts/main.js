@@ -104,6 +104,8 @@ $(function main() {
         window.server = server;
         window.logTable = azure.getTable(server.SAS_logs);
 
+        console.log(JSON.stringify(server))
+
         $('#mainInvitationStatus').empty();
         if (server.error || !server.SAS_content) {
             showLoad("Showing Invitation Page... " + (server.error || ""));
