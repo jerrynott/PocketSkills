@@ -21,7 +21,7 @@ jobs:
         dotnet-version: '3.0'
 
     - name: Print working directory
-      run : ls C:\Program Files\dotnet\sdk\9.0.202\Microsoft\VisualStudio\v17.0\
+      run : ls C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\VisualStudio\v17.0\
 
       
     - name: Install dotnet tools
