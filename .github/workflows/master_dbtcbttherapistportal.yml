@@ -23,6 +23,9 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
+    - name: Restore Nuget Packages
+      run: nuget restore PocketSkills.sln
+
     - name: Build solution
       run: msbuild PocketSkills.sln /p:Configuration=Release
 
