@@ -21,11 +21,12 @@ jobs:
         dotnet-version: '3.0'
 
     - name: Print working directory
-      run : ls C:\"Program Files"\dotnet\sdk
-
-      
-    - name: Install dotnet tools
-      run: dotnet workload install wasm-tools-net6
+      run: ls C:\"Program Files"\dotnet\sdk
+    - run: C:\"Program Files"\dotnet\sdk\9.0.202\
+    - run: C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\
+    - run: C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\VisualStudio\
+    - run: C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\VisualStudio\v17.0\
+            
       
     - name: Build with dotnet
       run: dotnet build --configuration Release -v d
