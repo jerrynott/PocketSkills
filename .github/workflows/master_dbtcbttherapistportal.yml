@@ -26,8 +26,8 @@ jobs:
     - name: Restore Nuget Packages
       run: nuget restore PocketSkills.sln
 
-    - name: Build solution
-      run: msbuild PocketSkills.sln /p:Configuration=Release
+    # - name: Build solution
+    #   run: msbuild PocketSkills.sln /p:Configuration=Release
 
     # - name: Print working directory
     #   run: ls C:\"Program Files"\dotnet\sdk
@@ -35,10 +35,9 @@ jobs:
     # - run: ls C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\
     # - run: ls C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\VisualStudio\
     # - run: ls C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\VisualStudio\v17.0\
-            
       
-    # - name: Build with dotnet
-    #   run: dotnet build --configuration Release -v d
+    - name: Build with dotnet
+      run: dotnet build --configuration Release -v d
 
     - name: dotnet publish
       run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
