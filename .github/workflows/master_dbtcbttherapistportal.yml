@@ -20,8 +20,8 @@ jobs:
       with:
         dotnet-version: '3.0'
 
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
+    - name: Install dotnet tools
+      run: dotnet workload install wasm-tools-net6
       
     - name: Build with dotnet
       run: dotnet build --configuration Release -v d
