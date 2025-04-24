@@ -35,7 +35,7 @@ jobs:
     - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\obj\Release
 
     - name: Publish solution
-      run: msbuild PocketSkills\PocketSkills.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:Configuration=Release
+      run: msbuild PocketSkills\PocketSkills.csproj /p:DeployOnBuild=true /p:Configuration=Release
 
     # - name: Print working directory
     #   run: ls C:\"Program Files"\dotnet\sdk
