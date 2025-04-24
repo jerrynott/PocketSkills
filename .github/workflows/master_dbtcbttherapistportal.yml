@@ -42,7 +42,7 @@ jobs:
     - name: Zip published files
       run: |
         mkdir deploy
-        Compress-Archive -Path "publish\*" -DestinationPath deploy\webapp.zip
+        Compress-Archive -Path "PocketSkills\obj\Release*" -DestinationPath deploy\webapp.zip
         
     # - name: Print working directory
     #   run: ls C:\"Program Files"\dotnet\sdk
