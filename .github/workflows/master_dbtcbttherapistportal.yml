@@ -35,6 +35,10 @@ jobs:
     # - run: ls C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\
     # - run: ls C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\VisualStudio\
     # - run: ls C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\VisualStudio\v17.0\
+    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills
+    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\bin
+    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\obj
+    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\
       
     # - name: Build with dotnet
     #   run: dotnet build --configuration Release
