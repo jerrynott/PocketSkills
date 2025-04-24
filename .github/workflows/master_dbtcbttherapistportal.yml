@@ -13,21 +13,21 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v3
 
-    - name: Set up .NET Core
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0'
+    # - name: Set up .NET Core
+    #   uses: actions/setup-dotnet@v4
+    #   with:
+    #     dotnet-version: '8.0'
 
-    # - name: Setup MSBuild
-    #   uses: microsoft/setup-msbuild@v2
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
 
     - name: Restore Nuget Packages
       run: nuget restore PocketSkills.sln
 
-    # - name: Build solution
-    #   run: msbuild PocketSkills.sln /p:Configuration=Release
+    - name: Build solution
+      run: msbuild PocketSkills.sln /p:Configuration=Release
 
     # - name: Print working directory
     #   run: ls C:\"Program Files"\dotnet\sdk
@@ -36,8 +36,8 @@ jobs:
     # - run: ls C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\VisualStudio\
     # - run: ls C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\VisualStudio\v17.0\
       
-    - name: Build with dotnet
-      run: dotnet build --configuration Release
+    # - name: Build with dotnet
+    #   run: dotnet build --configuration Release
 
     - run: pwd
     - run: ls
