@@ -25,14 +25,14 @@ jobs:
 
     - name: Restore Nuget Packages
       run: nuget restore PocketSkills.sln
+    
+    - name: Build solution
+      run: msbuild PocketSkills.sln /p:Configuration=Release
 
     - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills
     - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\bin
     - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\obj
     - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\obj\Release
-    
-    - name: Build solution
-      run: msbuild PocketSkills.sln /p:Configuration=Release
 
     - name: Publish solution
       run: msbuild PocketSkills\PocketSkills.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:Configuration=Release
