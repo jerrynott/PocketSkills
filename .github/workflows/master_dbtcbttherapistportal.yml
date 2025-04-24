@@ -37,7 +37,7 @@ jobs:
     - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\bin
 
     - name: Publish solution
-      run: msbuild PocketSkills\PocketSkills.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:Configuration=Release
+      run: msbuild PocketSkills\PocketSkills.csproj /p:DeployOnBuild=true /p:Configuration=Release
 
     - name: Zip published files
       run: |
