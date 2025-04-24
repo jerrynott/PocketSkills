@@ -26,8 +26,16 @@ jobs:
     - name: Restore Nuget Packages
       run: nuget restore PocketSkills.sln
 
+    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills
+    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\bin
+    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\obj
+    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\obj\Release
+    
     - name: Build solution
       run: msbuild PocketSkills.sln /p:Configuration=Release
+
+    - name: Publish solution
+      run: msbuild PocketSkills\PocketSkills.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:Configuration=Release
 
     # - name: Print working directory
     #   run: ls C:\"Program Files"\dotnet\sdk
@@ -35,10 +43,6 @@ jobs:
     # - run: ls C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\
     # - run: ls C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\VisualStudio\
     # - run: ls C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\VisualStudio\v17.0\
-    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills
-    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\bin
-    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\obj
-    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\
       
     # - name: Build with dotnet
     #   run: dotnet build --configuration Release
@@ -46,11 +50,11 @@ jobs:
     - run: pwd
     - run: ls
     
-    - name: dotnet publish
-      run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+    # - name: dotnet publish
+    #   run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
     - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v1
+      uses: azure/webapps-deploy@v2
       with:
         app-name: 'dbtcbttherapistportal'
         slot-name: 'production'
