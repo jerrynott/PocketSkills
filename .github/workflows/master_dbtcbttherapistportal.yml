@@ -39,7 +39,11 @@ jobs:
     - name: Publish solution
       run: msbuild PocketSkills\PocketSkills.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:Configuration=Release
 
-
+    - name: Zip published files
+      run: |
+        mkdir deploy
+        Compress-Archive -Path "publish\*" -DestinationPath deploy\webapp.zip
+        
     # - name: Print working directory
     #   run: ls C:\"Program Files"\dotnet\sdk
     # - run: ls C:\"Program Files"\dotnet\sdk\9.0.202\
@@ -62,4 +66,5 @@ jobs:
         app-name: 'dbtcbttherapistportal'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_95c88d7a4d9d4190ae88ceceb1f84541 }}
-        package: ${{env.DOTNET_ROOT}}/myapp 
+        # package: ${{env.DOTNET_ROOT}}/myapp 
+        package: deploy/webapp.zip
