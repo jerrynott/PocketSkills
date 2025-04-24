@@ -28,14 +28,17 @@ jobs:
     
     - name: Build solution
       run: msbuild PocketSkills.sln /p:Configuration=Release
-
-    - name: Publish solution
-      run: msbuild PocketSkills\PocketSkills.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:Configuration=Release
-
+      
     - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills
     - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\bin
     - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\obj
     - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\obj\Release
+    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\App_Code
+    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\bin
+
+    - name: Publish solution
+      run: msbuild PocketSkills\PocketSkills.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:Configuration=Release
+
 
     # - name: Print working directory
     #   run: ls C:\"Program Files"\dotnet\sdk
