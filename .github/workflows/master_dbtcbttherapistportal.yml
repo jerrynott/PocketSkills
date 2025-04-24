@@ -13,21 +13,48 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
 
-    - name: Set up .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '3.0.103'
+    # - name: Set up .NET Core
+    #   uses: actions/setup-dotnet@v4
+    #   with:
+    #     dotnet-version: '8.0'
 
-    - name: Build with dotnet
-      run: dotnet build --configuration Release
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
 
-    - name: dotnet publish
-      run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+    - name: Restore Nuget Packages
+      run: nuget restore PocketSkills.sln
+    
+    - name: Build solution
+      run: msbuild PocketSkills.sln /p:Configuration=Release
+
+    - name: Publish solution
+      run: msbuild PocketSkills\PocketSkills.csproj /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:Configuration=Release
+
+    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills
+    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\bin
+    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\obj
+    - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\obj\Release
+
+    # - name: Print working directory
+    #   run: ls C:\"Program Files"\dotnet\sdk
+    # - run: ls C:\"Program Files"\dotnet\sdk\9.0.202\
+    # - run: ls C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\
+    # - run: ls C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\VisualStudio\
+    # - run: ls C:\"Program Files"\dotnet\sdk\9.0.202\Microsoft\VisualStudio\v17.0\
+      
+    # - name: Build with dotnet
+    #   run: dotnet build --configuration Release
+
+    - run: pwd
+    - run: ls
+    
+    # - name: dotnet publish
+    #   run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
     - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v1
+      uses: azure/webapps-deploy@v2
       with:
         app-name: 'dbtcbttherapistportal'
         slot-name: 'production'
