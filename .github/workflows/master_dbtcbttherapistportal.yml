@@ -30,7 +30,7 @@ jobs:
       run: msbuild PocketSkills.sln /p:Configuration=Release
 
     - name: Publish solution
-      run: msbuild PocketSkills\PocketSkills.csproj /p:DeployOnBuild=true /p:Configuration=Release
+      run: msbuild PocketSkills\PocketSkills.csproj /p:DeployOnBuild=true /p:PublishProfile=${{ secrets.AzureAppService_PublishProfile_95c88d7a4d9d4190ae88ceceb1f84541 }} /p:Configuration=Release -o ${{env.DOTNET_ROOT}}/myapp
 
     - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills
     - run: ls D:\a\PocketSkills\PocketSkills\PocketSkills\bin
