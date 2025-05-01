@@ -72,6 +72,7 @@ $(function main() {
         WL.init({
             client_id: '99f6c780-7935-44d7-9ebb-b46360924825',
             redirect_uri: 'https://' + window.location.hostname + '/wlcallback.html',
+            logging: true,
         });
         console.log(`WL getloginstatus`)
         WL.getLoginStatus(function (status, session) {
