@@ -28,7 +28,7 @@ window.log = function (message) {
 
 $(function main() {
     'use strict';
-
+    debugger;
     showLoad("Initializing Objects...");
 
     window.settings = new Settings();
@@ -75,6 +75,7 @@ $(function main() {
         });
         console.log(`WL getloginstatus`)
         WL.getLoginStatus(function (status, session) {
+            console.log(`Status: ${JSON.stringify(status)}, Session: ${JSON.stringify(session)}`)
             if (status.status == 'connected') {
                 showLoad("Already Signed In.");
                 $('#mainLoginBlocker').hide();
