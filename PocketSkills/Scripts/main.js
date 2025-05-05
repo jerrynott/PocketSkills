@@ -14,7 +14,7 @@ mainLoadingStatus.innerHTML += "<div>Running Scripts...</div>";
 
 function showLoad(message, writeLog) {
     $(mainLoadingStatus).append($('<div>').text(message));
-    console.log(message)
+    console.debug(message)
     if (writeLog && window.log) {
         window.log(message);
     }
@@ -65,7 +65,7 @@ $(function main() {
         }
     });
 
-    checkSignIn();
+    msalSignIn();
 
     function checkSignIn() {
         showLoad("Checking Signin Status...");
@@ -92,6 +92,56 @@ $(function main() {
             WL.logout(function () {
                 location.href = location.origin;
             });
+        })
+    }
+
+    const msalConfig = {
+        auth: {
+            clientId: '',
+            authority: 'https://login.microsoftonline.com/common',
+            redirectUri: 'https://' + window.location.hostname + '/wlcallback.html'
+        }
+    }
+
+    const loginRequest = {
+        scopes: ['User.Read', 'Files.Read']
+    }
+
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+    function msalSignIn() {
+        showLoad("Checking Sign-In Status...")
+        const account = msalInstance.getActiveAccount()
+
+        if (account) {
+            showLoad("Already Signed In")
+            $('#mainLoginBlocker').hide()
+            getAccessTokens()
+        } else {
+            msalInstance.handleRedirectPromise()
+                .then((response) => {
+                    if (response) {
+                        msalInstance.SetActiveAccount(response.account)
+                        showLoad("Already Signed In.")
+                        $('#mainLoginBlocker').hide()
+                        getAccessTokens();
+                    } else {
+                        showLoad("Not Signed In.")
+                        showLoad("Showing Sign-In Screen...")
+                        $('#mainLoadingScreen').fadeOut('slow')
+                    }
+                })
+                .catch((error) => {
+                    console.error("Silent sign-in failed:", error)
+                    showLoad("Not Signed In.")
+                    $('#mainLoadingScreen').fadeOut('slow')
+                })
+        }
+
+        $('#windowsLiveSignOut, #invitationSignOut').click(() => {
+            msalInstance.logout({
+                postLogoutRedirectUri: window.location.origin
+            })
         })
     }
 
