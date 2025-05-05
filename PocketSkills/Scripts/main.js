@@ -1,4 +1,5 @@
 /// <reference path="azure.js" />
+<script src="https://alcdn.msauth.net/browser/2.37.0/js/msal-browser.min.js"></script>
 
 // Make the local version super speed.
 if (sessionStorage && sessionStorage.debug) {
