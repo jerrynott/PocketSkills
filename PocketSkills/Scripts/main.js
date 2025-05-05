@@ -65,8 +65,6 @@ $(function main() {
         }
     });
 
-    msalSignIn();
-
     function checkSignIn() {
         showLoad("Checking Signin Status...");
         console.log(`WL init`)
@@ -108,6 +106,9 @@ $(function main() {
     }
 
     const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+    msalSignIn();
+
 
     function msalSignIn() {
         showLoad("Checking Sign-In Status...")
