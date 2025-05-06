@@ -147,14 +147,63 @@ $(function main() {
     }
 
     function getAccessTokens() {
-        showLoad("Requesting Access...");
+        showLoad('Requesting Access...')
 
-        var request = 'Server.cshtml?' + (location.href.split('?')[1] || '');
-        $.getJSON(request, start).fail(function fail(jqxhr, textStatus, error) {
-            showLoad("Error Getting Access: '" + textStatus + "', '" + error + "'.  Retrying...");
-            $.getJSON(request, start).fail(fail);
-        });
+        const account = msalInstance.getActiveAccount();
+        if (!account) {
+            showLoad("No active account found.")
+            return;
+        }
+
+        const tokenRequest = {
+            scopes: ['User.Read', 'Files.Read'],
+            account: account
+        }
+
+        msalInstance.acquireTokenSilent(tokenRequest)
+            .then(tokenResponse => {
+                var accessToken = tokenResponse.accessToken;
+                var query = location.href.split('?')[1] || '';
+                var requestUrl = 'Server.cshtml?' + query;
+
+                $.ajax({
+                    url: requestUrl,
+                    headers: {
+                        Authorization: 'Bearer ' + accessToken
+                    },
+                    dataType: 'json',
+                    success: start,
+                    error: function fail(jqxhr, textStatus, error) {
+                        showLoad(`Error Getting Access: '${textStatus}', '${error}'. Retrying ...`)
+
+                        // Retry login once
+                        $.ajax({
+                            requestUrl,
+                            headers: {
+                                Authorization: 'Bearer ' + accessToken
+                            },
+                            dataType: 'json',
+                            success: start,
+                            error: fail
+                        })
+                    }
+                })
+            })
+            .catch(error => {
+                console.error("Failed to acquire tokens", error)
+                showLoad("Unable to get access token.")
+            })
     }
+
+    //function getAccessTokens() {
+    //    showLoad("Requesting Access...");
+
+    //    var request = 'Server.cshtml?' + (location.href.split('?')[1] || '');
+    //    $.getJSON(request, start).fail(function fail(jqxhr, textStatus, error) {
+    //        showLoad("Error Getting Access: '" + textStatus + "', '" + error + "'.  Retrying...");
+    //        $.getJSON(request, start).fail(fail);
+    //    });
+    //}
 
     function start(server) {
         window.server = server;
