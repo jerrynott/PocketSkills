@@ -193,6 +193,9 @@ $(function main() {
             .catch(error => {
                 console.error("Failed to acquire tokens", error)
                 showLoad("Unable to get access token.")
+                msalInstance.logout({
+                    postLogoutRedirectUri: window.location.origin
+                })
             })
     }
 
