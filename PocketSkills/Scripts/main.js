@@ -174,7 +174,7 @@ $(function main() {
                     dataType: 'json',
                     success: start,
                     error: function fail(jqxhr, textStatus, error) {
-                        showLoad(`Error Getting Access: '${textStatus}', '${error}'. Retrying ...`)
+                        showLoad(`Error Getting Access: '${textStatus}', '${error}'. Retrying...`)
 
                         // Retry login once
                         $.ajax({
