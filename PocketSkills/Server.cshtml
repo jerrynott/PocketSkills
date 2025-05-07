@@ -1,5 +1,6 @@
 ﻿@using System.Web.Configuration;
 @using Microsoft.Live;
+@using System;
 
 @{
     try
@@ -58,7 +59,7 @@
 
     public bool GetDataFromWindowsLive()
     {
-        var wl_auth = Request.Cookies["wl_auth"];
+        @*var auth = Request.Cookies["wl_auth"];
         if (wl_auth == null)
         {
             return false;
@@ -68,10 +69,17 @@
         if (String.IsNullOrWhiteSpace(access_token))
         {
             return false;
+        }*@
+
+        var authHeader = Request.Headers["Authorization"];
+        if (authHeader == null || (!authHeader.StartsWith("Bearer "))) {
+            return false;
         }
 
+        var accessToken = authHeader.Substring("Bearer ".Length);
+            
         var client = new LiveConnectClient((LiveConnectSession)Activator.CreateInstance(typeof(LiveConnectSession), true));
-        typeof(LiveConnectSession).GetProperty("AccessToken").SetValue(client.Session, access_token);
+        typeof(LiveConnectSession).GetProperty("AccessToken").SetValue(client.Session, accessToken);
         var result = client.GetAsync("me").Result;
         var data = result.Result;
         if (!data.ContainsKey("id") || !data.ContainsKey("name"))
@@ -111,8 +119,8 @@
         if (latest == null)
         {
             return CodeStatus.NoCodesAvailable;
-        }   
-        
+        }
+
         var latestCodes = latest.Properties["ID"].StringValue;
         var matchingCode = Azure.Query("content", String.Format("PartitionKey eq '{0}' and Code eq '{1}'", latestCodes, invitationCode)).SingleOrDefault();
         if (matchingCode == null)

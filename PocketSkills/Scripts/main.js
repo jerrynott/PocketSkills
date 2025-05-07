@@ -109,7 +109,6 @@ $(function main() {
 
     msalSignIn();
 
-
     function msalSignIn() {
         showLoad("Checking Sign-In Status...")
         const account = msalInstance.getActiveAccount()
