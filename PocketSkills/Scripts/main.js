@@ -129,7 +129,7 @@ $(function main() {
                     } else {
                         showLoad("Not Signed In.")
                         showLoad("Showing Sign-In Screen...")
-                        msalInstance.loginRedirect()
+                        msalInstance.loginRedirect(loginRequest)
                         $('#mainLoadingScreen').fadeOut('slow')
                     }
                 })
