@@ -97,7 +97,7 @@ $(function main() {
         auth: {
             clientId: 'd0c9fdad-80d0-43c8-9bdc-0912b0787913',
             authority: 'https://login.microsoftonline.com/common',
-            redirectUri: 'https://' + window.location.hostname + '/wlcallback.html'
+            redirectUri: 'https://' + window.location.hostname
         }
     }
 
