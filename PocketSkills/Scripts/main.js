@@ -122,7 +122,7 @@ $(function main() {
             msalInstance.handleRedirectPromise()
                 .then((response) => {
                     if (response) {
-                        msalInstance.SetActiveAccount(response.account)
+                        msalInstance.setActiveAccount(response.account)
                         showLoad("Already Signed In.")
                         $('#mainLoginBlocker').hide()
                         getAccessTokens();
