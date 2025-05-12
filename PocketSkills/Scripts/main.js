@@ -1,6 +1,6 @@
 /// <reference path="azure.js" />
 
-const Client_ID = 'beeaf3d2 - e4cd - 4a60-915c - 2184c57a951c'
+const Client_ID = 'beeaf3d2-e4cd-4a60-915c-2184c57a951c'
 
 // Make the local version super speed.
 if (sessionStorage && sessionStorage.debug) {
