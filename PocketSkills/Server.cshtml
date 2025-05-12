@@ -2,11 +2,18 @@
 @using Microsoft.Live;
 @using System;
 
+@using System.Net.Http
+@using System.Net.Http.Headers
+@using System.IdentityModel.Tokens.Jwt
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Graph
+@using Newtonsoft.Json.Linq
+
 @{
     try
     {
         // Get their User Name and ID from Windows Live.
-        if (GetDataFromWindowsLive())
+        if (GetDataFromMicrosoftGraph())
         {
             // Verify they're signing up with a valid invitation code.
             var invitationCode = Request.QueryString["i"];
@@ -78,6 +85,33 @@
         UserID = (string)data["id"];
         UserName = (string)data["name"];
         return true;
+    }
+
+    public bool GetDataFromMicrosoftGraph()
+    {
+        var authHeader = Request.Headers["Authorization"];
+        if (authHeader == null || (!authHeader.StartsWith("Bearer ")))
+        {
+            return false;
+        }
+
+        var accessToken = authHeader.Substring("Bearer ".Length);
+
+        using (var client = new HttpClient()) {
+            client.DefaultRequestHeaders.Add("Authorization", authHeader);
+            var response = client.GetAsync("https://graph.microsoft.com/v1.0/me").Result;
+            var json = response.Content.ReadAsStringAsync().Result;
+
+            if (!response.IsSuccessStatusCode) {
+                throw new Exception("Graph API error: " + json);
+            }
+
+            var data = JObject.Parse(json);
+            UserID = data["id"]?.ToString();
+            UserName = data["displayName"]?.ToString();
+
+            return !(string.IsNullOrEmpty(UserID) || string.IsNullOrEmpty(UserName));
+        }
     }
 
     public enum CodeStatus
