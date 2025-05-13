@@ -65,7 +65,7 @@
     public string UserID;
     public string UserName;
 
-    public bool GetDataFromWindowsLive()
+    @*public bool GetDataFromWindowsLive()
     {
         var authHeader = Request.Headers["Authorization"];
         if (authHeader == null || (!authHeader.StartsWith("Bearer ")))
@@ -87,7 +87,7 @@
         UserID = (string)data["id"];
         UserName = (string)data["name"];
         return true;
-    }
+    }*@
 
     public bool GetDataFromMicrosoftGraph()
     {
