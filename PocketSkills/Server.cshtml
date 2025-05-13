@@ -61,30 +61,6 @@
     public string UserID;
     public string UserName;
 
-    @*public bool GetDataFromWindowsLive()
-    {
-        var authHeader = Request.Headers["Authorization"];
-        if (authHeader == null || (!authHeader.StartsWith("Bearer ")))
-        {
-            return false;
-        }
-
-        var accessToken = authHeader.Substring("Bearer ".Length);
-
-        var client = new LiveConnectClient((LiveConnectSession)Activator.CreateInstance(typeof(LiveConnectSession), true));
-        typeof(LiveConnectSession).GetProperty("AccessToken").SetValue(client.Session, accessToken);
-        var result = client.GetAsync("me").Result;
-        var data = result.Result;
-        if (!data.ContainsKey("id") || !data.ContainsKey("name"))
-        {
-            throw new LiveConnectException(null, "Windows Live returned an error: " + result.RawResult);
-        }
-
-        UserID = (string)data["id"];
-        UserName = (string)data["name"];
-        return true;
-    }*@
-
     public bool GetDataFromMicrosoftGraph()
     {
         var authHeader = Request.Headers["Authorization"];
@@ -191,10 +167,10 @@
 @helper Reject(CodeStatus status, bool isNew)
 {
     var error = status == CodeStatus.Invalid ? (isNew ? "Invalid invitation code." : "Your invitation code is no longer valid.") :
-    status == CodeStatus.Expired ? (isNew ? "That code has expired." : "Your invitation code has expired.") :
-    status == CodeStatus.InUse ? (isNew ? "That code is being used by another account." : "Your invitation code is being used by another account.") :
-    status == CodeStatus.NoCodesAvailable ? (isNew ? "No invitation codes are available." : "Your invitation code is no longer available.") :
-    null;
+                status == CodeStatus.Expired ? (isNew ? "That code has expired." : "Your invitation code has expired.") :
+                status == CodeStatus.InUse ? (isNew ? "That code is being used by another account." : "Your invitation code is being used by another account.") :
+                status == CodeStatus.NoCodesAvailable ? (isNew ? "No invitation codes are available." : "Your invitation code is no longer available.") :
+                null;
     @Reject(error);
 }
 
