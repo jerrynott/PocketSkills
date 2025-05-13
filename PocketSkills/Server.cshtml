@@ -3,7 +3,6 @@
 
 @using System.Net.Http
 @using System.Net.Http.Headers
-@using System.IdentityModel.Tokens.Jwt
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.Graph
 @using Newtonsoft.Json.Linq
@@ -34,27 +33,32 @@
                 {
                     Azure.Set("codes", invitationCode, UserID);
                 }
-                @LetIn();
+                @LetIn()
+            ;
             }
             else
             {
-                @Reject(status, isNew);
+                @Reject(status, isNew)
+                ;
             }
         }
         else if (Request.Url.Host == "localhost")
         {
             UserID = "localhost";
             UserName = "localhost";
-            @LetIn();
+            @LetIn()
+            ;
         }
         else
         {
-            @Reject("Unauthenticated. Please sign in first.");
+            @Reject("Unauthenticated. Please sign in first.")
+            ;
         }
     }
     catch (Exception ex)
     {
-        @Reject(ex.Message);
+        @Reject(ex.Message)
+        ;
     }
 }
 
@@ -66,12 +70,13 @@
     public bool GetDataFromWindowsLive()
     {
         var authHeader = Request.Headers["Authorization"];
-        if (authHeader == null || (!authHeader.StartsWith("Bearer "))) {
+        if (authHeader == null || (!authHeader.StartsWith("Bearer ")))
+        {
             return false;
         }
 
         var accessToken = authHeader.Substring("Bearer ".Length);
-            
+
         var client = new LiveConnectClient((LiveConnectSession)Activator.CreateInstance(typeof(LiveConnectSession), true));
         typeof(LiveConnectSession).GetProperty("AccessToken").SetValue(client.Session, accessToken);
         var result = client.GetAsync("me").Result;
@@ -96,12 +101,14 @@
 
         var accessToken = authHeader.Substring("Bearer ".Length);
 
-        using (var client = new HttpClient()) {
+        using (var client = new HttpClient())
+        {
             client.DefaultRequestHeaders.Add("Authorization", authHeader);
             var response = client.GetAsync("https://graph.microsoft.com/v1.0/me").Result;
             var json = response.Content.ReadAsStringAsync().Result;
 
-            if (!response.IsSuccessStatusCode) {
+            if (!response.IsSuccessStatusCode)
+            {
                 throw new Exception("Graph API error: " + json);
             }
 
@@ -143,7 +150,8 @@
         }
 
         var latestCodes = latest.Properties["ID"].StringValue;
-        var matchingCode = Azure.Query("content", String.Format("PartitionKey eq '{0}' and Code eq '{1}'", latestCodes, invitationCode)).SingleOrDefault();
+        var matchingCode = Azure.Query("content", String.Format("PartitionKey eq '{0}' and Code eq '{1}'", latestCodes,
+        invitationCode)).SingleOrDefault();
         if (matchingCode == null)
         {
             return CodeStatus.Invalid;
@@ -151,8 +159,8 @@
 
         DateTime expiryDate;
         if (matchingCode.Properties.ContainsKey("ExpiryDate") &&
-            DateTime.TryParse(matchingCode.Properties["ExpiryDate"].PropertyAsObject.ToString(), out expiryDate) &&
-            expiryDate <= DateTime.Now)
+        DateTime.TryParse(matchingCode.Properties["ExpiryDate"].PropertyAsObject.ToString(), out expiryDate) &&
+        expiryDate <= DateTime.Now)
         {
             return CodeStatus.Expired;
         }
@@ -172,38 +180,43 @@
 
 @helper LetIn()
 {
-    @Html.Raw(Json.Encode(new
-    {
-        userID = UserID,
-        userName = UserName,
-        mediaLocation = Environment.GetEnvironmentVariable("MediaLocation") + "/", // e.g. "https://YOURACCOUNT.blob.core.windows.net/",
-        SAS_content = Environment.GetEnvironmentVariable("ContentSAS"), // e.g. "https://YOURACCOUNT.table.core.windows.net/TABLENAME?tn=TABLENAME&sv=2015-12-11&si=POLICY&spr=https&sig=SIGNATURE",
-        SAS_data = Azure.GetTableSASForUser(UserID, "data", true, true, false, false),
-        SAS_notes = Azure.GetTableSASForUser(UserID, "notes", true, true, false, false),
-        SAS_calendar = Azure.GetTableSASForUser(UserID, "calendar", true, true, false, false),
-        SAS_diarycards = Azure.GetTableSASForUser(UserID, "diarycards", true, true, false, false),
-        SAS_logs = Azure.GetTableSASForUser(UserID, "logs", false, true, false, false)
-    }));
+@Html.Raw(Json.Encode(new
+{
+    userID = UserID,
+userName = UserName,
+mediaLocation = Environment.GetEnvironmentVariable("MediaLocation") + "/", // e.g.
+"https://YOURACCOUNT.blob.core.windows.net/",
+SAS_content = Environment.GetEnvironmentVariable("ContentSAS"), // e.g.
+"https://YOURACCOUNT.table.core.windows.net/TABLENAME?tn=TABLENAME&sv=2015-12-11&si=POLICY&spr=https&sig=SIGNATURE",
+SAS_data = Azure.GetTableSASForUser(UserID, "data", true, true, false, false),
+SAS_notes = Azure.GetTableSASForUser(UserID, "notes", true, true, false, false),
+SAS_calendar = Azure.GetTableSASForUser(UserID, "calendar", true, true, false, false),
+SAS_diarycards = Azure.GetTableSASForUser(UserID, "diarycards", true, true, false, false),
+SAS_logs = Azure.GetTableSASForUser(UserID, "logs", false, true, false, false)
+}));
 }
 
 @helper Reject(CodeStatus status, bool isNew)
 {
-    var error = status == CodeStatus.Invalid ? (isNew ? "Invalid invitation code." : "Your invitation code is no longer valid.") :
-                status == CodeStatus.Expired ? (isNew ? "That code has expired." : "Your invitation code has expired.") :
-                status == CodeStatus.InUse ? (isNew ? "That code is being used by another account." : "Your invitation code is being used by another account.") :
-                status == CodeStatus.NoCodesAvailable ? (isNew ? "No invitation codes are available." : "Your invitation code is no longer available.") :
-                null;
-    @Reject(error);
+var error = status == CodeStatus.Invalid ? (isNew ? "Invalid invitation code." : "Your invitation code is no longer
+valid.") :
+status == CodeStatus.Expired ? (isNew ? "That code has expired." : "Your invitation code has expired.") :
+status == CodeStatus.InUse ? (isNew ? "That code is being used by another account." : "Your invitation code is being
+used by another account.") :
+status == CodeStatus.NoCodesAvailable ? (isNew ? "No invitation codes are available." : "Your invitation code is no
+longer available.") :
+null;
+@Reject(error);
 }
 
 @helper Reject(string error)
 {
-    @Html.Raw(Json.Encode(new
-    {
-        error = error,
-        userID = UserID,
-        userName = UserName,
-        mediaLocation = Environment.GetEnvironmentVariable("MediaLocation") + "/",
-        SAS_logs = Azure.GetTableSASForUser(UserID, "logs", false, true, false, false),
-    }));
+@Html.Raw(Json.Encode(new
+{
+    error = error,
+userID = UserID,
+userName = UserName,
+mediaLocation = Environment.GetEnvironmentVariable("MediaLocation") + "/",
+SAS_logs = Azure.GetTableSASForUser(UserID, "logs", false, true, false, false),
+}));
 }
