@@ -178,43 +178,38 @@
 
 @helper LetIn()
 {
-@Html.Raw(Json.Encode(new
-{
-    userID = UserID,
-userName = UserName,
-mediaLocation = Environment.GetEnvironmentVariable("MediaLocation") + "/", // e.g.
-"https://YOURACCOUNT.blob.core.windows.net/",
-SAS_content = Environment.GetEnvironmentVariable("ContentSAS"), // e.g.
-"https://YOURACCOUNT.table.core.windows.net/TABLENAME?tn=TABLENAME&sv=2015-12-11&si=POLICY&spr=https&sig=SIGNATURE",
-SAS_data = Azure.GetTableSASForUser(UserID, "data", true, true, false, false),
-SAS_notes = Azure.GetTableSASForUser(UserID, "notes", true, true, false, false),
-SAS_calendar = Azure.GetTableSASForUser(UserID, "calendar", true, true, false, false),
-SAS_diarycards = Azure.GetTableSASForUser(UserID, "diarycards", true, true, false, false),
-SAS_logs = Azure.GetTableSASForUser(UserID, "logs", false, true, false, false)
-}));
+    @Html.Raw(Json.Encode(new
+    {
+        userID = UserID,
+        userName = UserName,
+        mediaLocation = Environment.GetEnvironmentVariable("MediaLocation") + "/", // e.g. "https://YOURACCOUNT.blob.core.windows.net/",
+        SAS_content = Environment.GetEnvironmentVariable("ContentSAS"), // e.g. "https://YOURACCOUNT.table.core.windows.net/TABLENAME?tn=TABLENAME&sv=2015-12-11&si=POLICY&spr=https&sig=SIGNATURE",
+        SAS_data = Azure.GetTableSASForUser(UserID, "data", true, true, false, false),
+        SAS_notes = Azure.GetTableSASForUser(UserID, "notes", true, true, false, false),
+        SAS_calendar = Azure.GetTableSASForUser(UserID, "calendar", true, true, false, false),
+        SAS_diarycards = Azure.GetTableSASForUser(UserID, "diarycards", true, true, false, false),
+        SAS_logs = Azure.GetTableSASForUser(UserID, "logs", false, true, false, false)
+    }));
 }
 
 @helper Reject(CodeStatus status, bool isNew)
 {
-var error = status == CodeStatus.Invalid ? (isNew ? "Invalid invitation code." : "Your invitation code is no longer
-valid.") :
-status == CodeStatus.Expired ? (isNew ? "That code has expired." : "Your invitation code has expired.") :
-status == CodeStatus.InUse ? (isNew ? "That code is being used by another account." : "Your invitation code is being
-used by another account.") :
-status == CodeStatus.NoCodesAvailable ? (isNew ? "No invitation codes are available." : "Your invitation code is no
-longer available.") :
-null;
-@Reject(error);
+    var error = status == CodeStatus.Invalid ? (isNew ? "Invalid invitation code." : "Your invitation code is no longer valid.") :
+    status == CodeStatus.Expired ? (isNew ? "That code has expired." : "Your invitation code has expired.") :
+    status == CodeStatus.InUse ? (isNew ? "That code is being used by another account." : "Your invitation code is being used by another account.") :
+    status == CodeStatus.NoCodesAvailable ? (isNew ? "No invitation codes are available." : "Your invitation code is no longer available.") :
+    null;
+    @Reject(error);
 }
 
 @helper Reject(string error)
 {
-@Html.Raw(Json.Encode(new
-{
-    error = error,
-userID = UserID,
-userName = UserName,
-mediaLocation = Environment.GetEnvironmentVariable("MediaLocation") + "/",
-SAS_logs = Azure.GetTableSASForUser(UserID, "logs", false, true, false, false),
-}));
+    @Html.Raw(Json.Encode(new
+    {
+        error = error,
+        userID = UserID,
+        userName = UserName,
+        mediaLocation = Environment.GetEnvironmentVariable("MediaLocation") + "/",
+        SAS_logs = Azure.GetTableSASForUser(UserID, "logs", false, true, false, false),
+    }));
 }
