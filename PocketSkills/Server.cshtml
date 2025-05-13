@@ -31,8 +31,7 @@
                 {
                     Azure.Set("codes", invitationCode, UserID);
                 }
-                @LetIn()
-            ;
+                @LetIn();
             }
             else
             {
@@ -44,19 +43,16 @@
         {
             UserID = "localhost";
             UserName = "localhost";
-            @LetIn()
-            ;
+            @LetIn();
         }
         else
         {
-            @Reject("Unauthenticated. Please sign in first.")
-            ;
+            @Reject("Unauthenticated. Please sign in first.");
         }
     }
     catch (Exception ex)
     {
-        @Reject(ex.Message)
-        ;
+        @Reject(ex.Message);
     }
 }
 
