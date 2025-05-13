@@ -1,6 +1,7 @@
 /// <reference path="azure.js" />
 
-const Client_ID = 'beeaf3d2-e4cd-4a60-915c-2184c57a951c'
+const Client_ID = '4e173ffd-b9ca-470e-a71a-c01023427dc4'
+const Tenant_ID = '41e39a5f-6201-4e13-9452-3e68848757f1'
 
 // Make the local version super speed.
 if (sessionStorage && sessionStorage.debug) {
@@ -98,7 +99,7 @@ $(function main() {
     const msalConfig = {
         auth: {
             clientId: Client_ID,
-            authority: 'https://login.microsoftonline.com/common',
+            authority: `https://login.microsoftonline.com/${Tenant_ID}`,
             redirectUri: 'https://' + window.location.hostname
         }
     }
