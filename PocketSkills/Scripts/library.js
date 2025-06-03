@@ -35,6 +35,8 @@ function Library(element, data) {
     _this.$list = $('<div>').addClass('list').appendTo(_this.$root);
 
     $(_this.library).on('loaded', function () {
+        console.log(`Loaded Library`);
+
         function ancestry(item) {
             var parent = _this.library.get(item.Parent);
             return parent ? ancestry(parent) + " " + (parent.Title || parent.ID) : "";

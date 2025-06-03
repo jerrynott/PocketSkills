@@ -1,11 +1,15 @@
 ﻿@using System.Web.Configuration;
-@using Microsoft.Live;
+@using System;
+
+@using System.Net.Http
+@using System.Net.Http.Headers
+@using Newtonsoft.Json.Linq
 
 @{
     try
     {
         // Get their User Name and ID from Windows Live.
-        if (GetDataFromWindowsLive())
+        if (GetDataFromMicrosoftGraph())
         {
             // Verify they're signing up with a valid invitation code.
             var invitationCode = Request.QueryString["i"];
@@ -31,7 +35,8 @@
             }
             else
             {
-                @Reject(status, isNew);
+                @Reject(status, isNew)
+                ;
             }
         }
         else if (Request.Url.Host == "localhost")
@@ -56,32 +61,33 @@
     public string UserID;
     public string UserName;
 
-    public bool GetDataFromWindowsLive()
+    public bool GetDataFromMicrosoftGraph()
     {
-        var wl_auth = Request.Cookies["wl_auth"];
-        if (wl_auth == null)
+        var authHeader = Request.Headers["Authorization"];
+        if (authHeader == null || (!authHeader.StartsWith("Bearer ")))
         {
             return false;
         }
 
-        var access_token = wl_auth.Values["access_token"];
-        if (String.IsNullOrWhiteSpace(access_token))
-        {
-            return false;
-        }
+        var accessToken = authHeader.Substring("Bearer ".Length);
 
-        var client = new LiveConnectClient((LiveConnectSession)Activator.CreateInstance(typeof(LiveConnectSession), true));
-        typeof(LiveConnectSession).GetProperty("AccessToken").SetValue(client.Session, access_token);
-        var result = client.GetAsync("me").Result;
-        var data = result.Result;
-        if (!data.ContainsKey("id") || !data.ContainsKey("name"))
+        using (var client = new HttpClient())
         {
-            throw new LiveConnectException(null, "Windows Live returned an error: " + result.RawResult);
-        }
+            client.DefaultRequestHeaders.Add("Authorization", authHeader);
+            var response = client.GetAsync("https://graph.microsoft.com/v1.0/me").Result;
+            var json = response.Content.ReadAsStringAsync().Result;
 
-        UserID = (string)data["id"];
-        UserName = (string)data["name"];
-        return true;
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Graph API error: " + json);
+            }
+
+            var data = JObject.Parse(json);
+            UserID = data["id"]?.ToString();
+            UserName = data["displayName"]?.ToString();
+
+            return !(string.IsNullOrEmpty(UserID) || string.IsNullOrEmpty(UserName));
+        }
     }
 
     public enum CodeStatus
@@ -111,10 +117,11 @@
         if (latest == null)
         {
             return CodeStatus.NoCodesAvailable;
-        }   
-        
+        }
+
         var latestCodes = latest.Properties["ID"].StringValue;
-        var matchingCode = Azure.Query("content", String.Format("PartitionKey eq '{0}' and Code eq '{1}'", latestCodes, invitationCode)).SingleOrDefault();
+        var matchingCode = Azure.Query("content", String.Format("PartitionKey eq '{0}' and Code eq '{1}'", latestCodes,
+        invitationCode)).SingleOrDefault();
         if (matchingCode == null)
         {
             return CodeStatus.Invalid;
@@ -122,8 +129,8 @@
 
         DateTime expiryDate;
         if (matchingCode.Properties.ContainsKey("ExpiryDate") &&
-            DateTime.TryParse(matchingCode.Properties["ExpiryDate"].PropertyAsObject.ToString(), out expiryDate) &&
-            expiryDate <= DateTime.Now)
+        DateTime.TryParse(matchingCode.Properties["ExpiryDate"].PropertyAsObject.ToString(), out expiryDate) &&
+        expiryDate <= DateTime.Now)
         {
             return CodeStatus.Expired;
         }

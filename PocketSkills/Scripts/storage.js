@@ -195,6 +195,8 @@ function Data() {
     }
 
     _this.load = function (sas, user) {
+        console.log(`Loaded data`);
+
         _this.table = azure.getTable(sas);
         _this.user = user;
 

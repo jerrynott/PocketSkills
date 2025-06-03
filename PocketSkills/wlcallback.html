@@ -51,15 +51,35 @@
             a:active {
                 color: #999;
             }
-
         }
     </style>
     Thank you! <a href="/">Returning</a>...
     <script src="//js.live.net/v5.0/wl.js"></script>
+    <script src="https://alcdn.msauth.net/browser/2.37.0/js/msal-browser.min.js"></script>
     <script>
-        setTimeout(function () {
-            location.href = '/';
-        }, 1000);
+
+        const msalInstance = new PublicClientApplication({
+            auth: {
+                clientId: "d0c9fdad-80d0-43c8-9bdc-0912b0787913",
+                redirectUri: "https://" + location.host,
+            }
+        });
+
+        msalInstance.handleRedirectPromise().then((authResult) => {
+            if (authResult) {
+                msalInstance.setActiveAccount(authResult.account)
+            } else {
+                const currentAccount = msalInstance.getActiveAccount()
+                if (!currentAccount) {
+                    msalInstance.loginRedirect()
+                }
+            }
+
+            setTimeout(function () {
+                location.href = '/';
+            }, 1000);
+        }) 
+
     </script>
 </body>
 </html>

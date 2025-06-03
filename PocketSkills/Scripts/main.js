@@ -1,5 +1,8 @@
 /// <reference path="azure.js" />
 
+const Client_ID = '4e173ffd-b9ca-470e-a71a-c01023427dc4'
+const Tenant_ID = '41e39a5f-6201-4e13-9452-3e68848757f1'
+
 // Make the local version super speed.
 if (sessionStorage && sessionStorage.debug) {
     azure.debug = true;
@@ -14,6 +17,7 @@ mainLoadingStatus.innerHTML += "<div>Running Scripts...</div>";
 
 function showLoad(message, writeLog) {
     $(mainLoadingStatus).append($('<div>').text(message));
+    console.debug(message)
     if (writeLog && window.log) {
         window.log(message);
     }
@@ -64,15 +68,16 @@ $(function main() {
         }
     });
 
-    checkSignIn();
-
     function checkSignIn() {
         showLoad("Checking Signin Status...");
+        console.log(`WL init`)
         WL.init({
-            client_id: '57d2f757-526c-45cb-b21f-29247ce3dfed',
+            client_id: Client_ID,
             redirect_uri: 'https://' + window.location.hostname + '/wlcallback.html',
         });
+        console.log(`WL getloginstatus`)
         WL.getLoginStatus(function (status, session) {
+            console.log(`Status: ${JSON.stringify(status)}, Session: ${JSON.stringify(session)}`)
             if (status.status == 'connected') {
                 showLoad("Already Signed In.");
                 $('#mainLoginBlocker').hide();
@@ -83,6 +88,7 @@ $(function main() {
                 $('#mainLoadingScreen').fadeOut('slow');
             }
         }, true);
+        console.log("Sign out");
         $('#windowsLiveSignOut, #invitationSignOut').click(function () {
             WL.logout(function () {
                 location.href = location.origin;
@@ -90,15 +96,120 @@ $(function main() {
         })
     }
 
-    function getAccessTokens() {
-        showLoad("Requesting Access...");
-
-        var request = 'Server.cshtml?' + (location.href.split('?')[1] || '');
-        $.getJSON(request, start).fail(function fail(jqxhr, textStatus, error) {
-            showLoad("Error Getting Access: '" + textStatus + "', '" + error + "'.  Retrying...");
-            $.getJSON(request, start).fail(fail);
-        });
+    const msalConfig = {
+        auth: {
+            clientId: Client_ID,
+            authority: `https://login.microsoftonline.com/common`,
+            redirectUri: 'https://' + window.location.hostname
+        }
     }
+
+    const loginRequest = {
+        scopes: ['User.Read', 'Files.Read']
+    }
+
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+    msalSignIn();
+
+    function msalSignIn() {
+        showLoad("Checking Sign-In Status...")
+        const account = msalInstance.getActiveAccount()
+
+        if (account) {
+            showLoad("Already Signed In")
+            $('#mainLoginBlocker').hide()
+            getAccessTokens()
+        } else {
+            msalInstance.handleRedirectPromise()
+                .then((response) => {
+                    if (response) {
+                        msalInstance.setActiveAccount(response.account)
+                        showLoad("Already Signed In.")
+                        $('#mainLoginBlocker').hide()
+                        getAccessTokens();
+                    } else {
+                        showLoad("Not Signed In.")
+                        showLoad("Showing Sign-In Screen...")
+                        msalInstance.loginRedirect(loginRequest)
+                        $('#mainLoadingScreen').fadeOut('slow')
+                    }
+                })
+                .catch((error) => {
+                    console.error("Silent sign-in failed:", error)
+                    showLoad("Not Signed In.")
+                    $('#mainLoadingScreen').fadeOut('slow')
+                })
+        }
+
+        $('#windowsLiveSignOut, #invitationSignOut').click(() => {
+            msalInstance.logout({
+                postLogoutRedirectUri: window.location.origin
+            })
+        })
+    }
+
+    function getAccessTokens() {
+        showLoad('Requesting Access...')
+
+        const account = msalInstance.getActiveAccount();
+        if (!account) {
+            showLoad("No active account found.")
+            return;
+        }
+
+        const tokenRequest = {
+            scopes: ['User.Read', 'Files.Read'],
+            account: account
+        }
+
+        msalInstance.acquireTokenSilent(tokenRequest)
+            .then(tokenResponse => {
+                var accessToken = tokenResponse.accessToken;
+                var query = location.href.split('?')[1] || '';
+                var requestUrl = 'Server.cshtml?' + query;
+
+                $.ajax({
+                    url: requestUrl,
+                    headers: {
+                        Authorization: 'Bearer ' + accessToken
+                    },
+                    dataType: 'json',
+                    success: start,
+                    error: function fail(jqxhr, textStatus, error) {
+                        showLoad(`Error Getting Access: '${textStatus}', '${error}'. Retrying...`)
+
+                        // Retry login once
+                        $.ajax({
+                            requestUrl,
+                            headers: {
+                                Authorization: 'Bearer ' + accessToken
+                            },
+                            dataType: 'json',
+                            success: start,
+                            error: fail
+                        })
+                    }
+                })
+            })
+            .catch(error => {
+                console.error("Failed to acquire tokens", error)
+                showLoad("Unable to get access token.")
+                msalInstance.logout({
+                    postLogoutRedirectUri: window.location.origin
+                })
+            })
+    }
+
+    //function getAccessTokens() {
+    //    showLoad("Requesting Access...");
+
+    //    var request = 'Server.cshtml?' + (location.href.split('?')[1] || '');
+    //    $.getJSON(request, start).fail(function fail(jqxhr, textStatus, error) {
+    //        showLoad("Error Getting Access: '" + textStatus + "', '" + error + "'.  Retrying...");
+    //        $.getJSON(request, start).fail(fail);
+    //    });
+    //}
 
     function start(server) {
         window.server = server;
@@ -131,6 +242,8 @@ $(function main() {
             loads.push(calendar.load(server.SAS_calendar, server.userID));
             loads.push(diarycards.load(server.SAS_diarycards, server.SAS_content, server.userID));
             loads.push(data.load(server.SAS_data, server.userID));
+
+            console.log(JSON.stringify(loads))
 
             $.when.apply($, loads).done(finish).fail(function fail(jqxhr, textStatus, error) {
                 showLoad(error + ": " + textStatus);
@@ -188,6 +301,7 @@ $(function main() {
     });
 
     $(settings).on('loaded', function () {
+        console.log(`Loaded Settings`);
         var placeholders = {
             'AboutText': '#AboutAboutText',
             'LegalText': '#AboutLegalText',

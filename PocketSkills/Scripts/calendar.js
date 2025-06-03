@@ -39,6 +39,7 @@ function Calendar(element, data) {
 
     // Loads all activities into the list.
     _this.load = function (sas, user) {
+        console.log(`Loading Calendar`);
         _this.sas = sas;
         _this.table = azure.getTable(sas);
         _this.user = user;

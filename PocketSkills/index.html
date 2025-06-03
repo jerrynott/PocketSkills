@@ -33,6 +33,8 @@
     <link rel="stylesheet" href="/styles/library.css">
     <link rel="stylesheet" href="/styles/store.css">
     <!--<link rel="stylesheet" href="styles/debug.css">-->
+
+    <script src="https://alcdn.msauth.net/browser/2.37.0/js/msal-browser.min.js"></script>
 </head>
 <body id="main">
     <header id="mainHeader">
@@ -224,13 +226,13 @@
                 <p>
                     Please sign into your Microsoft Windows Live account, or create a new one if you don't already have one.
                 </p>
-                <div id="windowsLiveSignIn" onclick="location.href = 'https://login.live.com/oauth20_authorize.srf?client_id=57d2f757-526c-45cb-b21f-29247ce3dfed&display=page&locale=en&redirect_uri=https://' + location.host + '/wlcallback.html&response_type=token&scope=wl.signin&state=redirect_type=auth&display=page&response_method=url&secure_cookie=false';">Sign In</div>
+                <div id="windowsLiveSignIn" onclick="location.href = 'https://login.live.com/oauth20_authorize.srf?client_id=beeaf3d2-e4cd-4a60-915c-2184c57a951c&display=page&locale=en&redirect_uri=https://' + location.host + '/&response_type=token&scope=wl.signin&state=redirect_type=auth&display=page&response_method=url&secure_cookie=false';">Sign In</div>
             </section>
             <section id="mainLoginStatus"></section>
         </div>
         <div>
             <img src="/Icons/PocketSkills_Logo.png" />
-            This is Pocket Skills.  Please <span id="testSignIn" onclick="location.href='https://login.live.com/oauth20_authorize.srf?client_id=57d2f757-526c-45cb-b21f-29247ce3dfed&display=page&locale=en&redirect_uri=https://' + location.host + '/wlcallback.html&response_type=token&scope=wl.signin&state=redirect_type=auth&display=page&response_method=url&secure_cookie=false';">sign in</span> with your Microsoft Account.
+            This is Pocket Skills.  Please <span id="testSignIn" onclick="location.href='https://login.live.com/oauth20_authorize.srf?client_id=beeaf3d2-e4cd-4a60-915c-2184c57a951c&display=page&locale=en&redirect_uri=https://' + location.host + '/&response_type=token&scope=wl.signin&state=redirect_type=auth&display=page&response_method=url&secure_cookie=false';">sign in</span> with your Microsoft Account.
         </div>
         <div class="copyright">
         </div>

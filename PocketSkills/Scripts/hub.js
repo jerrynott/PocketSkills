@@ -21,6 +21,8 @@ function Hub(element, data) {
     _this.loaded = null; // Keeps track of whether we have loaded data or not.
 
     $(_this.content).on('loaded', function () {
+        console.log(`Loading Hub`);
+
         _this.content.forEach(function (row) {
             _this.modules[row.ID] = row;
             _this.modules[row.ID].children = [];

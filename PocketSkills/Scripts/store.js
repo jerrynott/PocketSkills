@@ -41,6 +41,8 @@ function Store(element, data) {
     }
 
     $(_this.library).on('loaded', function () {
+        console.log(`Loaded store`);
+
         var i = 0;
 
         _this.library.forEach(function (item) {
