@@ -215,7 +215,7 @@ $(function main() {
         window.server = server;
         window.logTable = azure.getTable(server.SAS_logs);
 
-        console.log(JSON.stringify(server))
+        //console.log(JSON.stringify(server))
 
         $('#mainInvitationStatus').empty();
         if (server.error || !server.SAS_content) {
@@ -242,7 +242,7 @@ $(function main() {
             loads.push(calendar.load(server.SAS_calendar, server.userID));
             loads.push(diarycards.load(server.SAS_diarycards, server.SAS_content, server.userID));
             loads.push(data.load(server.SAS_data, server.userID));
-
+            
             console.log(JSON.stringify(loads))
 
             $.when.apply($, loads).done(finish).fail(function fail(jqxhr, textStatus, error) {
