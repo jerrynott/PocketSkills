@@ -47,7 +47,7 @@
         }
         else
         {
-            @Reject("Unauthenticated. Please sign in first.");
+            @Reject($"Unauthenticated. Please sign in first. {Request.Headers}");
         }
     }
     catch (Exception ex)
@@ -66,7 +66,6 @@
         var authHeader = Request.Headers["Authorization"];
         if (authHeader == null || (!authHeader.StartsWith("Bearer ")))
         {
-            Console.Write("Header is invalid");
             return false;
         }
 
@@ -86,7 +85,6 @@
             var data = JObject.Parse(json);
             UserID = data["id"]?.ToString();
             UserName = data["displayName"]?.ToString();
-            Console.WriteLine($"UserID: {UserID}, Username: {UserName}");
 
             return !string.IsNullOrEmpty(UserID) || !string.IsNullOrEmpty(UserName);
         }
