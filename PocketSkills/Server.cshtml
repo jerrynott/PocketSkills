@@ -78,7 +78,6 @@
             authHeader = "Bearer " + accessToken;
         }
 
-
         using (var client = new HttpClient())
         {
             client.DefaultRequestHeaders.Add("Authorization", authHeader);
