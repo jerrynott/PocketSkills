@@ -63,13 +63,21 @@
 
     public bool GetDataFromMicrosoftGraph()
     {
-        var authHeader = Request.Headers["Authorization"];
-        if (authHeader == null || (!authHeader.StartsWith("Bearer ")))
+        string authHeader, accessToken;
+        if (Request.Headers["Authorization"] == null){
+            authHeader = Request.Headers["Authorization"];
+            if (authHeader == null || (!authHeader.StartsWith("Bearer ")))
+            {
+                return false;
+            }
+            accessToken = authHeader.Substring("Bearer ".Length);
+        }
+        else
         {
-            return false;
+            accessToken = Request.Headers["Authorization"];
+            authHeader = "Bearer " + accessToken;
         }
 
-        var accessToken = authHeader.Substring("Bearer ".Length);
 
         using (var client = new HttpClient())
         {

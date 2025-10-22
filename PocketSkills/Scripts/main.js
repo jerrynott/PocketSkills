@@ -168,6 +168,7 @@ $(function main() {
                 var accessToken = tokenResponse.accessToken;
                 var query = location.href.split('?')[1] || '';
                 var requestUrl = 'Server.cshtml?' + query;
+                document.cookie = `authToken=${accessToken}`
 
                 $.ajax({
                     url: requestUrl,
@@ -289,6 +290,11 @@ $(function main() {
         } else {
             $('#mainInvitationStatus').text("Checking code...");
             showLoad("Checking Code '" + code + "'...");
+            $.ajaxSetup({
+                headers: {
+                    'authentication': 
+                }
+            })
             $.getJSON('Server.cshtml?i=' + code, start).fail(function fail(jqxhr, textStatus, error) {
                 $('#mainInvitationStatus').text($('#mainInvitationStatus').text() + ".");
                 showLoad("Error Checking Code: '" + textStatus + "', '" + error + "'.  Retrying...");
