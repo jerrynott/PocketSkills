@@ -217,8 +217,6 @@ $(function main() {
         window.server = server;
         window.logTable = azure.getTable(server.SAS_logs);
 
-        //console.log(JSON.stringify(server))
-
         $('#mainInvitationStatus').empty();
         if (server.error || !server.SAS_content) {
             showLoad("Showing Invitation Page... " + (server.error || ""));
@@ -292,29 +290,33 @@ $(function main() {
             $('#mainInvitationStatus').text("Checking code...");
             showLoad("Checking Code '" + code + "'...");
 
-            $.ajax({
-                dataType: "json", 
-                url: 'Server.cshtml?i=' + code,
-                success: start,
-                xhrFields: { withCredentials: true },
-                error: function fail(jqxhr, textStatus, error) {
-                    // Retry once
-                    $('#mainInvitationStatus').text($('#mainInvitationStatus').text() + ".");
-                    showLoad("Error Checking Code: '" + textStatus + "', '" + error + "'.  Retrying...");
-                    $.ajax({
-                        dataType: "json",
-                        url: 'Server.cshtml?i=' + code,
-                        success: start,
-                        xhrFields: { withCredentials: true },
-                        error: fail
-                    })
-                }
-            })
-            //$.getJSON('Server.cshtml?i=' + code, start).fail(function fail(jqxhr, textStatus, error) {
-            //    $('#mainInvitationStatus').text($('#mainInvitationStatus').text() + ".");
-            //    showLoad("Error Checking Code: '" + textStatus + "', '" + error + "'.  Retrying...");
-            //    $.getJSON('Server.cshtml?i=' + code, start).fail(fail);
-            //});
+            //$.ajax({
+            //    dataType: "json",
+            //    url: 'Server.cshtml?i=' + code,
+            //    success: start,
+            //    xhrFields: { withCredentials: true },
+            //    error: function fail(jqxhr, textStatus, error) {
+            //        // Retry once
+            //        $('#mainInvitationStatus').text($('#mainInvitationStatus').text() + ".");
+            //        showLoad("Error Checking Code: '" + textStatus + "', '" + error + "'.  Retrying...");
+            //        $.ajax({
+            //            dataType: "json",
+            //            url: 'Server.cshtml?i=' + code,
+            //            success: start,
+            //            xhrFields: { withCredentials: true },
+            //            error: fail
+            //        })
+            //    }
+            //})
+
+            const account = msalInstance.getActiveAccount();
+            console.log(`Account: ${JSON.stringify(account)}`)
+
+            $.getJSON('Server.cshtml?i=' + code, start).fail(function fail(jqxhr, textStatus, error) {
+                $('#mainInvitationStatus').text($('#mainInvitationStatus').text() + ".");
+                showLoad("Error Checking Code: '" + textStatus + "', '" + error + "'.  Retrying...");
+                $.getJSON('Server.cshtml?i=' + code, start).fail(fail);
+            });
             $(':focus').blur();
         }
 
