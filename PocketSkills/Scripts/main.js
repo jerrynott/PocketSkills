@@ -168,6 +168,7 @@ $(function main() {
                 var accessToken = tokenResponse.accessToken;
                 var query = location.href.split('?')[1] || '';
                 var requestUrl = 'Server.cshtml?' + query;
+                console.log(`authToken=${accessToken}`)
                 document.cookie = `authToken=${accessToken}`
 
                 $.ajax({
