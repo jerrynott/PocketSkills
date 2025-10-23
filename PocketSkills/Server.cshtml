@@ -47,7 +47,7 @@
         }
         else
         {
-            @Reject($"Unauthenticated. Please sign in first. {Request.Headers}");
+            @Reject($"Unauthenticated. Please sign in first.");
         }
     }
     catch (Exception ex)
