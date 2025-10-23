@@ -64,7 +64,7 @@
     public bool GetDataFromMicrosoftGraph()
     {
         string authHeader, accessToken;
-        if (Request.Headers["Authorization"] == null){
+        if (Request.Cookies["authToken "] == null){
             authHeader = Request.Headers["Authorization"];
             if (authHeader == null || (!authHeader.StartsWith("Bearer ")))
             {
@@ -74,7 +74,7 @@
         }
         else
         {
-            accessToken = Request.Headers["Authorization"];
+            accessToken = Request.Cookies["authToken"].Value;
             authHeader = "Bearer " + accessToken;
         }
 
