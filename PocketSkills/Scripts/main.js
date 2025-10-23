@@ -81,7 +81,7 @@ $(function main() {
             if (status.status == 'connected') {
                 showLoad("Already Signed In.");
                 $('#mainLoginBlocker').hide();
-                getAccessTokens();
+                startApp();
             } else {
                 showLoad("Not Signed In.");
                 showLoad("Showing Sign-In Screen...");
@@ -119,7 +119,7 @@ $(function main() {
         if (account) {
             showLoad("Already Signed In")
             $('#mainLoginBlocker').hide()
-            getAccessTokens()
+            startApp();
         } else {
             msalInstance.handleRedirectPromise()
                 .then((response) => {
@@ -127,7 +127,7 @@ $(function main() {
                         msalInstance.setActiveAccount(response.account)
                         showLoad("Already Signed In.")
                         $('#mainLoginBlocker').hide()
-                        getAccessTokens();
+                        startApp();
                     } else {
                         showLoad("Not Signed In.")
                         showLoad("Showing Sign-In Screen...")
@@ -150,67 +150,115 @@ $(function main() {
     }
 
     function getAccessTokens() {
-        showLoad('Requesting Access...')
+        return new Promise((resolve, reject) => {
+            const account = msalInstance.getActiveAccount();
+            if (!account) {
+                showLoad("No active account found.")
+                reject(new Error(`No active MSAL account`)
+            }
 
-        const account = msalInstance.getActiveAccount();
-        if (!account) {
-            showLoad("No active account found.")
-            return;
-        }
+            const tokenRequest = {
+                scopes: [`User.Read`, `Files.Read`],
+                account: account
+            }
 
-        const tokenRequest = {
-            scopes: ['User.Read', 'Files.Read'],
-            account: account
-        }
+            msalInstance.acquireTokenSilent(tokenRequest)
+                .then(tokenResponse => resolve(tokenResponse.accessToken))
+                .error(error => {
+                    console.error("Failed to acquire tokens", error);
+                    showLoad("Unable to get access tokens")
+                    msalInstance.logout({
+                        postLogoutRedirectUri: window.location.origin
+                    })
+                })
+        })
+    }
 
-        msalInstance.acquireTokenSilent(tokenRequest)
-            .then(tokenResponse => {
-                var accessToken = tokenResponse.accessToken;
-                var query = location.href.split('?')[1] || '';
-                var requestUrl = 'Server.cshtml?' + query;
-                console.log(`authToken=${accessToken}`)
-                document.cookie = `authToken=${accessToken}`
+    function ajaxRequest(accessToken, url, next, err) {
+        $.ajax({
+            url: requestUrl,
+            headers: {
+                Authorization: 'Bearer ' + accessToken
+            },
+            dataType: 'json',
+            success: next,
+            error: function fail(jqxhr, textStatus, error) {
+                showLoad(`Error getting access: '${textStatus}', '${error}'. Retrying...`)
 
+                // Retry once
                 $.ajax({
                     url: requestUrl,
                     headers: {
                         Authorization: 'Bearer ' + accessToken
                     },
                     dataType: 'json',
-                    success: start,
-                    error: function fail(jqxhr, textStatus, error) {
-                        showLoad(`Error Getting Access: '${textStatus}', '${error}'. Retrying...`)
+                    success: next,
+                    error: err 
+                })
+            }
+        })
+    }
 
-                        // Retry login once
-                        $.ajax({
-                            requestUrl,
-                            headers: {
-                                Authorization: 'Bearer ' + accessToken
-                            },
-                            dataType: 'json',
-                            success: start,
-                            error: fail
-                        })
-                    }
-                })
-            })
-            .catch(error => {
-                console.error("Failed to acquire tokens", error)
-                showLoad("Unable to get access token.")
-                msalInstance.logout({
-                    postLogoutRedirectUri: window.location.origin
-                })
+    function startApp() {
+        getAccessTokens()
+            .then(accessToken => {
+                var query = location.href.split('?')[1] || '';
+                var requestUrl = 'Server.cshtml?' + query;
+                ajaxRequest(accessToken, requestUrl, start, (e) => console.trace(e));
             })
     }
 
     //function getAccessTokens() {
-    //    showLoad("Requesting Access...");
+    //    showLoad('Requesting Access...')
 
-    //    var request = 'Server.cshtml?' + (location.href.split('?')[1] || '');
-    //    $.getJSON(request, start).fail(function fail(jqxhr, textStatus, error) {
-    //        showLoad("Error Getting Access: '" + textStatus + "', '" + error + "'.  Retrying...");
-    //        $.getJSON(request, start).fail(fail);
-    //    });
+    //    const account = msalInstance.getActiveAccount();
+    //    if (!account) {
+    //        showLoad("No active account found.")
+    //        return;
+    //    }
+
+    //    const tokenRequest = {
+    //        scopes: ['User.Read', 'Files.Read'],
+    //        account: account
+    //    }
+
+    //    msalInstance.acquireTokenSilent(tokenRequest)
+    //        .then(tokenResponse => {
+    //            var accessToken = tokenResponse.accessToken;
+    //            var query = location.href.split('?')[1] || '';
+    //            var requestUrl = 'Server.cshtml?' + query;
+    //            document.cookie = `authToken=${accessToken}`
+
+    //            $.ajax({
+    //                url: requestUrl,
+    //                headers: {
+    //                    Authorization: 'Bearer ' + accessToken
+    //                },
+    //                dataType: 'json',
+    //                success: start,
+    //                error: function fail(jqxhr, textStatus, error) {
+    //                    showLoad(`Error Getting Access: '${textStatus}', '${error}'. Retrying...`)
+
+    //                    // Retry login once
+    //                    $.ajax({
+    //                        requestUrl,
+    //                        headers: {
+    //                            Authorization: 'Bearer ' + accessToken
+    //                        },
+    //                        dataType: 'json',
+    //                        success: start,
+    //                        error: fail
+    //                    })
+    //                }
+    //            })
+    //        })
+    //        .catch(error => {
+    //            console.error("Failed to acquire tokens", error)
+    //            showLoad("Unable to get access token.")
+    //            msalInstance.logout({
+    //                postLogoutRedirectUri: window.location.origin
+    //            })
+    //        })
     //}
 
     function start(server) {
@@ -290,28 +338,31 @@ $(function main() {
             $('#mainInvitationStatus').text("Checking code...");
             showLoad("Checking Code '" + code + "'...");
 
-            //$.ajax({
-            //    dataType: "json",
-            //    url: 'Server.cshtml?i=' + code,
-            //    success: start,
-            //    xhrFields: { withCredentials: true },
-            //    error: function fail(jqxhr, textStatus, error) {
-            //        // Retry once
-            //        $('#mainInvitationStatus').text($('#mainInvitationStatus').text() + ".");
-            //        showLoad("Error Checking Code: '" + textStatus + "', '" + error + "'.  Retrying...");
-            //        $.ajax({
-            //            dataType: "json",
-            //            url: 'Server.cshtml?i=' + code,
-            //            success: start,
-            //            xhrFields: { withCredentials: true },
-            //            error: fail
-            //        })
-            //    }
-            //})
-
             const account = msalInstance.getActiveAccount();
             console.log(`Account: ${JSON.stringify(account)}`)
 
+            $.ajax({
+                url: 'Server.cshtml?i=' + code,
+                dataType: 'json',
+                headers: {
+                    'Authentication': 'Bearer ' + 
+                },
+                success: start,
+                error: function fail(jqxhr, textStatus, error) {
+                    $('#mainInvitationStatus').text($('#mainInvitationStatus').text() + ".");
+                    showLoad("Error Checking Code: '" + textStatus + "', '" + error + "'.  Retrying...");
+                    // Retry once
+                    $.ajax({
+                        url: 'Server.cshtml?i=' + code,
+                        dataType: 'json',
+                        headers: { 'X-Invitation-Code': code },
+                        success: start,
+                        error: fail
+                    });
+                }
+            });
+
+            })
             $.getJSON('Server.cshtml?i=' + code, start).fail(function fail(jqxhr, textStatus, error) {
                 $('#mainInvitationStatus').text($('#mainInvitationStatus').text() + ".");
                 showLoad("Error Checking Code: '" + textStatus + "', '" + error + "'.  Retrying...");

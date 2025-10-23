@@ -81,7 +81,6 @@
         using (var client = new HttpClient())
         {
             client.DefaultRequestHeaders.Add("Authorization", authHeader);
-            System.Diagnostics.Debug.WriteLine($"auth header: {authHeader}");
             var response = client.GetAsync("https://graph.microsoft.com/v1.0/me").Result;
             var json = response.Content.ReadAsStringAsync().Result;
 
