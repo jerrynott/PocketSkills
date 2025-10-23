@@ -363,11 +363,11 @@ $(function main() {
             //    }
             //});
 
-            $.getJSON('Server.cshtml?i=' + code, start).fail(function fail(jqxhr, textStatus, error) {
-                $('#mainInvitationStatus').text($('#mainInvitationStatus').text() + ".");
-                showLoad("Error Checking Code: '" + textStatus + "', '" + error + "'.  Retrying...");
-                $.getJSON('Server.cshtml?i=' + code, start).fail(fail);
-            });
+            //$.getJSON('Server.cshtml?i=' + code, start).fail(function fail(jqxhr, textStatus, error) {
+            //    $('#mainInvitationStatus').text($('#mainInvitationStatus').text() + ".");
+            //    showLoad("Error Checking Code: '" + textStatus + "', '" + error + "'.  Retrying...");
+            //    $.getJSON('Server.cshtml?i=' + code, start).fail(fail);
+            //});
             $(':focus').blur();
         }
 
