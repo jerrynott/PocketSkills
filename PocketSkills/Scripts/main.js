@@ -176,7 +176,7 @@ $(function main() {
 
     function ajaxRequest(accessToken, url, next, err) {
         $.ajax({
-            url: requestUrl,
+            url,
             headers: {
                 Authorization: 'Bearer ' + accessToken
             },
