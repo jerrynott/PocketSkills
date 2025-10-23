@@ -164,7 +164,7 @@ $(function main() {
 
             msalInstance.acquireTokenSilent(tokenRequest)
                 .then(tokenResponse => resolve(tokenResponse.accessToken))
-                .error(error => {
+                .catch(error => {
                     console.error("Failed to acquire tokens", error);
                     showLoad("Unable to get access tokens")
                     msalInstance.logout({
