@@ -154,7 +154,7 @@ $(function main() {
             const account = msalInstance.getActiveAccount();
             if (!account) {
                 showLoad("No active account found.")
-                reject(new Error(`No active MSAL account`)
+                reject(new Error(`No active MSAL account`))
             }
 
             const tokenRequest = {
