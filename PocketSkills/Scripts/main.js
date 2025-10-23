@@ -338,31 +338,31 @@ $(function main() {
             $('#mainInvitationStatus').text("Checking code...");
             showLoad("Checking Code '" + code + "'...");
 
-            const account = msalInstance.getActiveAccount();
-            console.log(`Account: ${JSON.stringify(account)}`)
-
-            $.ajax({
-                url: 'Server.cshtml?i=' + code,
-                dataType: 'json',
-                headers: {
-                    'Authentication': 'Bearer ' + 
-                },
-                success: start,
-                error: function fail(jqxhr, textStatus, error) {
-                    $('#mainInvitationStatus').text($('#mainInvitationStatus').text() + ".");
-                    showLoad("Error Checking Code: '" + textStatus + "', '" + error + "'.  Retrying...");
-                    // Retry once
-                    $.ajax({
-                        url: 'Server.cshtml?i=' + code,
-                        dataType: 'json',
-                        headers: { 'X-Invitation-Code': code },
-                        success: start,
-                        error: fail
-                    });
-                }
-            });
-
+            getAccessTokens().then(accessToken => {
+                ajaxRequest(accessToken, `Server.cshtml?i=${code}`, start, (e) => console.trace(e))
             })
+
+            //$.ajax({
+            //    url: 'Server.cshtml?i=' + code,
+            //    dataType: 'json',
+            //    headers: {
+            //        'Authentication': 'Bearer ' + 
+            //    },
+            //    success: start,
+            //    error: function fail(jqxhr, textStatus, error) {
+            //        $('#mainInvitationStatus').text($('#mainInvitationStatus').text() + ".");
+            //        showLoad("Error Checking Code: '" + textStatus + "', '" + error + "'.  Retrying...");
+            //        // Retry once
+            //        $.ajax({
+            //            url: 'Server.cshtml?i=' + code,
+            //            dataType: 'json',
+            //            headers: { 'X-Invitation-Code': code },
+            //            success: start,
+            //            error: fail
+            //        });
+            //    }
+            //});
+
             $.getJSON('Server.cshtml?i=' + code, start).fail(function fail(jqxhr, textStatus, error) {
                 $('#mainInvitationStatus').text($('#mainInvitationStatus').text() + ".");
                 showLoad("Error Checking Code: '" + textStatus + "', '" + error + "'.  Retrying...");
