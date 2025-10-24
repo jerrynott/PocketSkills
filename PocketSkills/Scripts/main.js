@@ -68,7 +68,7 @@ $(function main() {
     function checkSignIn() {
         showLoad("Checking Signin Status...");
         WL.init({
-            client_id: process.env.Client_ID,
+            client_id: window.server.Client_ID,
             redirect_uri: 'https://' + window.location.hostname + '/wlcallback.html',
         });
         WL.getLoginStatus(function (status, session) {
@@ -91,7 +91,7 @@ $(function main() {
 
     const msalConfig = {
         auth: {
-            clientId: process.env.Client_ID,
+            clientId: window.server.Client_ID,
             authority: `https://login.microsoftonline.com/common`,
             redirectUri: 'https://' + window.location.hostname
         }
@@ -230,8 +230,6 @@ $(function main() {
             loads.push(calendar.load(server.SAS_calendar, server.userID));
             loads.push(diarycards.load(server.SAS_diarycards, server.SAS_content, server.userID));
             loads.push(data.load(server.SAS_data, server.userID));
-            
-            console.log(JSON.stringify(loads))
 
             $.when.apply($, loads).done(finish).fail(function fail(jqxhr, textStatus, error) {
                 showLoad(error + ": " + textStatus);
