@@ -158,11 +158,13 @@
 @helper LetIn()
 {
     @Html.Raw(Json.Encode(new
-    {
-        userID = UserID,
-        userName = UserName,
-        mediaLocation = Environment.GetEnvironmentVariable("MediaLocation") + "/", // e.g. "https://YOURACCOUNT.blob.core.windows.net/",
-        SAS_content = Environment.GetEnvironmentVariable("ContentSAS"), // e.g. "https://YOURACCOUNT.table.core.windows.net/TABLENAME?tn=TABLENAME&sv=2015-12-11&si=POLICY&spr=https&sig=SIGNATURE",
+{
+    userID = UserID,
+    userName = UserName,
+    mediaLocation = Environment.GetEnvironmentVariable("MediaLocation") + "/", // e.g. "https://YOURACCOUNT.blob.core.windows.net/",
+    Client_ID = Environment.GetEnvironmentVariable("Client_ID"),
+    Tenant_ID = Environment.GetEnvironmentVariable("Tenant_ID"),
+    SAS_content = Environment.GetEnvironmentVariable("ContentSAS"), // e.g. "https://YOURACCOUNT.table.core.windows.net/TABLENAME?tn=TABLENAME&sv=2015-12-11&si=POLICY&spr=https&sig=SIGNATURE",
         SAS_data = Azure.GetTableSASForUser(UserID, "data", true, true, false, false),
         SAS_notes = Azure.GetTableSASForUser(UserID, "notes", true, true, false, false),
         SAS_calendar = Azure.GetTableSASForUser(UserID, "calendar", true, true, false, false),

@@ -1,8 +1,5 @@
 /// <reference path="azure.js" />
 
-const Client_ID = '4e173ffd-b9ca-470e-a71a-c01023427dc4'
-const Tenant_ID = '41e39a5f-6201-4e13-9452-3e68848757f1'
-
 // Make the local version super speed.
 if (sessionStorage && sessionStorage.debug) {
     azure.debug = true;
@@ -70,14 +67,11 @@ $(function main() {
 
     function checkSignIn() {
         showLoad("Checking Signin Status...");
-        console.log(`WL init`)
         WL.init({
-            client_id: Client_ID,
+            client_id: window.server.Client_ID,
             redirect_uri: 'https://' + window.location.hostname + '/wlcallback.html',
         });
-        console.log(`WL getloginstatus`)
         WL.getLoginStatus(function (status, session) {
-            console.log(`Status: ${JSON.stringify(status)}, Session: ${JSON.stringify(session)}`)
             if (status.status == 'connected') {
                 showLoad("Already Signed In.");
                 $('#mainLoginBlocker').hide();
@@ -88,7 +82,6 @@ $(function main() {
                 $('#mainLoadingScreen').fadeOut('slow');
             }
         }, true);
-        console.log("Sign out");
         $('#windowsLiveSignOut, #invitationSignOut').click(function () {
             WL.logout(function () {
                 location.href = location.origin;
@@ -98,7 +91,7 @@ $(function main() {
 
     const msalConfig = {
         auth: {
-            clientId: Client_ID,
+            clientId: window.server.Client_ID,
             authority: `https://login.microsoftonline.com/common`,
             redirectUri: 'https://' + window.location.hostname
         }
@@ -208,59 +201,6 @@ $(function main() {
             })
     }
 
-    //function getAccessTokens() {
-    //    showLoad('Requesting Access...')
-
-    //    const account = msalInstance.getActiveAccount();
-    //    if (!account) {
-    //        showLoad("No active account found.")
-    //        return;
-    //    }
-
-    //    const tokenRequest = {
-    //        scopes: ['User.Read', 'Files.Read'],
-    //        account: account
-    //    }
-
-    //    msalInstance.acquireTokenSilent(tokenRequest)
-    //        .then(tokenResponse => {
-    //            var accessToken = tokenResponse.accessToken;
-    //            var query = location.href.split('?')[1] || '';
-    //            var requestUrl = 'Server.cshtml?' + query;
-    //            document.cookie = `authToken=${accessToken}`
-
-    //            $.ajax({
-    //                url: requestUrl,
-    //                headers: {
-    //                    Authorization: 'Bearer ' + accessToken
-    //                },
-    //                dataType: 'json',
-    //                success: start,
-    //                error: function fail(jqxhr, textStatus, error) {
-    //                    showLoad(`Error Getting Access: '${textStatus}', '${error}'. Retrying...`)
-
-    //                    // Retry login once
-    //                    $.ajax({
-    //                        requestUrl,
-    //                        headers: {
-    //                            Authorization: 'Bearer ' + accessToken
-    //                        },
-    //                        dataType: 'json',
-    //                        success: start,
-    //                        error: fail
-    //                    })
-    //                }
-    //            })
-    //        })
-    //        .catch(error => {
-    //            console.error("Failed to acquire tokens", error)
-    //            showLoad("Unable to get access token.")
-    //            msalInstance.logout({
-    //                postLogoutRedirectUri: window.location.origin
-    //            })
-    //        })
-    //}
-
     function start(server) {
         window.server = server;
         window.logTable = azure.getTable(server.SAS_logs);
@@ -341,33 +281,6 @@ $(function main() {
             getAccessTokens().then(accessToken => {
                 ajaxRequest(accessToken, `Server.cshtml?i=${code}`, start, (e) => console.trace(e))
             })
-
-            //$.ajax({
-            //    url: 'Server.cshtml?i=' + code,
-            //    dataType: 'json',
-            //    headers: {
-            //        'Authentication': 'Bearer ' + 
-            //    },
-            //    success: start,
-            //    error: function fail(jqxhr, textStatus, error) {
-            //        $('#mainInvitationStatus').text($('#mainInvitationStatus').text() + ".");
-            //        showLoad("Error Checking Code: '" + textStatus + "', '" + error + "'.  Retrying...");
-            //        // Retry once
-            //        $.ajax({
-            //            url: 'Server.cshtml?i=' + code,
-            //            dataType: 'json',
-            //            headers: { 'X-Invitation-Code': code },
-            //            success: start,
-            //            error: fail
-            //        });
-            //    }
-            //});
-
-            //$.getJSON('Server.cshtml?i=' + code, start).fail(function fail(jqxhr, textStatus, error) {
-            //    $('#mainInvitationStatus').text($('#mainInvitationStatus').text() + ".");
-            //    showLoad("Error Checking Code: '" + textStatus + "', '" + error + "'.  Retrying...");
-            //    $.getJSON('Server.cshtml?i=' + code, start).fail(fail);
-            //});
             $(':focus').blur();
         }
 
