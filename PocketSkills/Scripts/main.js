@@ -68,7 +68,7 @@ $(function main() {
     function checkSignIn() {
         showLoad("Checking Signin Status...");
         WL.init({
-            client_id: window.server.Client_ID,
+            client_id: process.env.Client_ID,
             redirect_uri: 'https://' + window.location.hostname + '/wlcallback.html',
         });
         WL.getLoginStatus(function (status, session) {
@@ -91,7 +91,7 @@ $(function main() {
 
     const msalConfig = {
         auth: {
-            clientId: window.server.Client_ID,
+            clientId: process.env.Client_ID,
             authority: `https://login.microsoftonline.com/common`,
             redirectUri: 'https://' + window.location.hostname
         }
