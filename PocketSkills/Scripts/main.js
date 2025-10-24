@@ -1,5 +1,7 @@
 /// <reference path="azure.js" />
 
+Client_ID = '4e173ffd-b9ca-470e-a71a-c01023427dc4'
+
 // Make the local version super speed.
 if (sessionStorage && sessionStorage.debug) {
     azure.debug = true;
@@ -68,7 +70,7 @@ $(function main() {
     function checkSignIn() {
         showLoad("Checking Signin Status...");
         WL.init({
-            client_id: server.Client_ID,
+            client_id: Client_ID,
             redirect_uri: 'https://' + window.location.hostname + '/wlcallback.html',
         });
         WL.getLoginStatus(function (status, session) {
@@ -91,7 +93,7 @@ $(function main() {
 
     const msalConfig = {
         auth: {
-            clientId: server.Client_ID,
+            clientId: Client_ID,
             authority: `https://login.microsoftonline.com/common`,
             redirectUri: 'https://' + window.location.hostname
         }
