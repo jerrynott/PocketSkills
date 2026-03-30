@@ -18,7 +18,9 @@ function Library(element, data) {
     _this.$search = $('<input type="text">').addClass('search').attr('placeholder', "Search for Content").appendTo(_this.$root).on('change keyup', function () {
         var search = $(this).val().toLowerCase();
         if (!search) {
+            _this.$list.find('.folder').addClass('open');
             _this.$list.find('.item').show();
+            _this.$list.find('.folder').removeClass('open');
         } else {
             _this.$list.find('.item').hide();
             _this.$list.find('.item').each(function () {
