@@ -53,6 +53,9 @@ function Library(element, data) {
                 $('<span>').addClass('folder-title').html(item.Title || item.ID).appendTo($header);
                 $header.click(function () {
                     $item.toggleClass('open');
+                    if (!$item.hasClass('open')) {
+                        $item.find('.item').css('display', '');
+                    }
                 });
             } else {
                 $item.click(function () {
