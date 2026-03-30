@@ -17,6 +17,43 @@
         margin-bottom: 10px;
     }
 
+        .library > .list .item.folder > .folder-header {
+            display: flex;
+            align-items: center;
+            padding: 10px 8px;
+            background-color: #e8e8e8;
+            border-radius: 5px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+            .library > .list .item.folder > .folder-header > .folder-arrow {
+                display: inline-block;
+                margin-right: 10px;
+                font-size: 12px;
+                transition: transform 0.2s ease;
+                transform: rotate(0deg);
+            }
+
+            .library > .list .item.folder > .folder-header > .folder-title {
+                font-weight: bold;
+                font-size: 15px;
+            }
+
+        .library > .list .item.folder.open > .folder-header > .folder-arrow {
+            transform: rotate(90deg);
+        }
+
+        .library > .list .item.folder > .item {
+            display: none;
+            margin-left: 12px;
+            margin-top: 6px;
+        }
+
+        .library > .list .item.folder.open > .item {
+            display: block;
+        }
+
         .library > .list .item > .item-content {
             display: -webkit-flex; /* For my Samsung Galaxy S4 test device running Android 4.4 */
             display: flex;

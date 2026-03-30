@@ -44,13 +44,20 @@ function Library(element, data) {
 
         _this.library.forEach(function (item) {
             // Create a new item in the list.
-            var $item = $('<div>').addClass('item').attr('id', item.ID).addClass(item.Type).toggleClass('purchasable', !!item.StoreCost).appendTo(_this.$list).click(function () {
-                if (item.Type) {
-                    location.hash += '/' + this.id;
-                }
-            });
+            var isFolder = !item.Type;
+            var $item = $('<div>').addClass('item').attr('id', item.ID).addClass(item.Type).toggleClass('purchasable', !!item.StoreCost).toggleClass('folder', isFolder).appendTo(_this.$list);
 
-            if (item.Type) {
+            if (isFolder) {
+                var $header = $('<div>').addClass('folder-header').appendTo($item);
+                $('<span>').addClass('folder-arrow').html('&#9654;').appendTo($header);
+                $('<span>').addClass('folder-title').html(item.Title || item.ID).appendTo($header);
+                $header.click(function () {
+                    $item.toggleClass('open');
+                });
+            } else {
+                $item.click(function () {
+                    location.hash += '/' + this.id;
+                });
                 var $content = $('<div>').addClass('item-content').appendTo($item);
                 if (item.Thumbnail) {
                     var src = _this.data.evaluateText(item.Thumbnail);
