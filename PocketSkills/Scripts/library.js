@@ -27,7 +27,8 @@ function Library(element, data) {
                 if (!search || ~item.Title.toLowerCase().indexOf(search)) {
                     $(this).show(); // Show this row
                     $(this).find('.item').show(); // Show all the children
-                    $(this).parentsUntil(_this.$list).show(); // Show all the parents
+                    $(this).parentsUntil(_this.$list).addClass("open")
+                    //$(this).parentsUntil(_this.$list).show(); // Show all the parents
                 }
             });
         }
