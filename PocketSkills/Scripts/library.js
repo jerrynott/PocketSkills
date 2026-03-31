@@ -21,7 +21,7 @@ function Library(element, data) {
             _this.$list.find('.folder').addClass('open');
             _this.$list.find('.item').show();
             _this.$list.find('.folder').each(function () {
-                $(this).trigger('click');
+                $(this).find('.folder-header').trigger('click');
             })
         } else {
             _this.$list.find('.item').hide();
