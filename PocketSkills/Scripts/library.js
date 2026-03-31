@@ -20,7 +20,9 @@ function Library(element, data) {
         if (!search) {
             _this.$list.find('.folder').addClass('open');
             _this.$list.find('.item').show();
-            _this.$list.find('.folder').trigger("click")
+            _this.$list.find('.folder').each(function () {
+                $(this).trigger('click');
+            })
         } else {
             _this.$list.find('.item').hide();
             _this.$list.find('.item').each(function () {
